@@ -1,0 +1,7 @@
+{
+  "Algorithm" : "DummyCompressionAlgorithm",
+  "Processing" : "DummyProcessing",
+  "table_path" : "ava/gdfd/ggg.csv",
+  "logs" : "True",
+  "run_type" : "test"
+}
