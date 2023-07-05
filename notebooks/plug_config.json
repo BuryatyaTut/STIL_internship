@@ -1,0 +1,7 @@
+{
+  "Algorithm" : "DummyCompressionAlgorithm",
+  "Processing" : "DummyProcessing",
+  "table_path" : "...",
+  "logs" : "True",
+  "run_type" : "test"
+}
