@@ -1,7 +1,7 @@
 {
   "Algorithm" : "DummyCompressionAlgorithm",
   "Processing" : "DummyProcessing",
-  "table_path" : "plug_config.json",
+  "table_path" : "flush.txt",
   "logs" : "True",
   "run_type" : "test"
 }
