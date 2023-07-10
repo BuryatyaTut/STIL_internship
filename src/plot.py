@@ -1,6 +1,7 @@
 import pandas as pd
 import seaborn as sns
 
+
 def plot_benchmarks(benchmarks, column_name):
     df = pd.DataFrame(benchmarks)
     df = df.reset_index()
