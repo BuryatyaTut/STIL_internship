@@ -1,27 +1,27 @@
-import abc as __abc
+import abc
 
 
-class CompressionAlgorithm(__abc.ABC):
+class CompressionAlgorithm(abc.ABC):
     def __init__(self):
         ...
 
     @property
-    @__abc.abstractmethod
+    @abc.abstractmethod
     def name(self):
         ...
 
-    @__abc.abstractmethod
+    @abc.abstractmethod
     def compress(self, table_file_path, compressed_file_path):
         ...
 
-    @__abc.abstractmethod
+    @abc.abstractmethod
     def decompress(self, compressed_file_path, decompressed_file_path):
         ...
 
 
 class LearningCompressionAlgorithm(CompressionAlgorithm):
 
-    @__abc.abstractmethod
+    @abc.abstractmethod
     def fit(self, training_data):
         ...
 

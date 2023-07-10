@@ -1,7 +1,8 @@
 import pickle
 import zstandard as zstd
-import sklearn
 import pandas as pd
+import sklearn
+import sklearn.decomposition
 from algo.codec import NonLearningCompressionAlgorithm, LossyCompressionAlgorithm
 
 
