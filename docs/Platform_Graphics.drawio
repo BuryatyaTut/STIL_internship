@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2023-07-11T07:55:01.514Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0" etag="5WFSnEjW73nvXPoUK2bP" version="21.5.2" type="github">
+<mxfile host="app.diagrams.net" modified="2023-07-11T07:55:42.079Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0" etag="O9A8uS1aceb2xpmP4Jwc" version="21.5.2" type="github">
   <diagram id="UDz6CcKp5vvzcTjrNr50" name="Page-1">
-    <mxGraphModel dx="1103" dy="1800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1687" dy="2134" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -116,7 +116,7 @@
         <mxCell id="hTVvLyft6rMGYpKhxL-7-48" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="hTVvLyft6rMGYpKhxL-7-18" target="hTVvLyft6rMGYpKhxL-7-47" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="hTVvLyft6rMGYpKhxL-7-18" value="&lt;b&gt;compress&lt;/b&gt;(processing, algo, row data)" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="hTVvLyft6rMGYpKhxL-7-18" value="&lt;b&gt;compression&lt;/b&gt;(processing, algo, row data)" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="600" y="64" width="270" height="60" as="geometry" />
         </mxCell>
         <mxCell id="hTVvLyft6rMGYpKhxL-7-46" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="hTVvLyft6rMGYpKhxL-7-20" target="hTVvLyft6rMGYpKhxL-7-45" edge="1">
