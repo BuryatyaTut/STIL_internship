@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2023-07-11T07:47:25.375Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0" etag="o2bztyTK1csnKYBiU2Lh" version="21.5.2" type="github">
+<mxfile host="app.diagrams.net" modified="2023-07-11T07:55:01.514Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0" etag="5WFSnEjW73nvXPoUK2bP" version="21.5.2" type="github">
   <diagram id="UDz6CcKp5vvzcTjrNr50" name="Page-1">
-    <mxGraphModel dx="1593" dy="2080" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1103" dy="1800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -36,10 +36,10 @@
           <mxGeometry x="770" y="326" width="100" height="30" as="geometry" />
         </mxCell>
         <mxCell id="ZPh97H9B8s04hcJ3Fn8W-12" value="" style="verticalLabelPosition=bottom;verticalAlign=top;html=1;shape=mxgraph.basic.frame;dx=10;" parent="1" vertex="1">
-          <mxGeometry x="865" y="310" width="420" height="60" as="geometry" />
+          <mxGeometry x="865" y="310" width="435" height="60" as="geometry" />
         </mxCell>
         <mxCell id="ZPh97H9B8s04hcJ3Fn8W-13" value="&amp;nbsp; &amp;nbsp;Compression Rate, compression time, decompression time, loss rate..." style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
-          <mxGeometry x="855" y="326" width="410" height="30" as="geometry" />
+          <mxGeometry x="877.5" y="325" width="410" height="30" as="geometry" />
         </mxCell>
         <mxCell id="ZPh97H9B8s04hcJ3Fn8W-14" value="" style="endArrow=none;dashed=1;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
@@ -116,7 +116,7 @@
         <mxCell id="hTVvLyft6rMGYpKhxL-7-48" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="hTVvLyft6rMGYpKhxL-7-18" target="hTVvLyft6rMGYpKhxL-7-47" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="hTVvLyft6rMGYpKhxL-7-18" value="&lt;b&gt;compression&lt;/b&gt;(processing, algo, row data)" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="hTVvLyft6rMGYpKhxL-7-18" value="&lt;b&gt;compress&lt;/b&gt;(processing, algo, row data)" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="600" y="64" width="270" height="60" as="geometry" />
         </mxCell>
         <mxCell id="hTVvLyft6rMGYpKhxL-7-46" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="hTVvLyft6rMGYpKhxL-7-20" target="hTVvLyft6rMGYpKhxL-7-45" edge="1">
