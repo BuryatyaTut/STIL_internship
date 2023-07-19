@@ -1,9 +1,11 @@
 import inspect
 import os
+import pickle
 import random
 import time
 from algo.codec import LosslessCompressionAlgorithm, LearningCompressionAlgorithm
-
+import pandas as pd
+import numpy as np
 
 def get_compression_rate(input_file, compressed_file):  # I'm assuming compressed_table is actually bytes-like
     input_file.seek(0, os.SEEK_END)
@@ -12,9 +14,13 @@ def get_compression_rate(input_file, compressed_file):  # I'm assuming compresse
     return compressed_file.tell() / input_file.tell()
 
 
-def get_loss_rate(input_file, decompressed_file):
-    print("I am dummy: ", inspect.currentframe().f_code.co_name)
-    return random.randint(0, 20)
+def get_loss_rate(input_file_path, decompressed_file_path):
+    with open(input_file_path, 'rb') as input_file, open(decompressed_file_path, 'rb') as decompressed_file:
+        src = pickle.load(input_file).select_dtypes(["number"]).to_numpy()
+        dec = pickle.load(decompressed_file).select_dtypes(["number"]).to_numpy()
+        return np.sqrt(np.mean((src - dec) ** 2))
+
+
 
 
 class Scaffold:
@@ -92,7 +98,7 @@ class Scaffold:
         self.processing.do_postprocess(filenames["decompressed"], filenames["postprocessed"])
 
         if self.logs:
-            loss_rate = get_loss_rate(self.table_path, filenames["compressed"])
+            loss_rate = get_loss_rate(filenames["preprocessed"], filenames["decompressed"])
             self.benchmark["loss_rate"] = loss_rate
 
         return 0

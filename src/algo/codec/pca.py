@@ -24,6 +24,7 @@ class PCACompression(NonLearningCompressionAlgorithm, LossyCompressionAlgorithm)
             pca = sklearn.decomposition.PCA(n_components=self.n_components, svd_solver='full')
             transformed = pca.fit_transform(numeric)
             print("transformed head:", transformed[0])
+            print("pca loadings: ", pca.components_.T)
             print("pca scores: ", pca.score(numeric), pca.score_samples(numeric))
             parameters = pca.get_params()
             components = pca.components_
