@@ -9,9 +9,11 @@ class NormalizeProcessing(Processing):
     def do_preprocess(self, raw_file_path, processed_file_path):
 
         df = pd.read_csv(raw_file_path, index_col=0)
+        non_numeric = df.select_dtypes(exclude=['number'])
+        df = df.select_dtypes(["number"])
         self.mean = df.mean()
         self.std = df.std()
-        df = (df - self.mean) / self.std
+        df = pd.concat([(df - self.mean) / self.std, non_numeric], axis=1)
         with open(processed_file_path, 'wb') as processed_file:
             pickle.dump(df, processed_file)
 
