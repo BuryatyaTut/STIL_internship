@@ -4,7 +4,7 @@ import pandas as pd
 import sklearn
 import sklearn.decomposition
 from algo.codec import NonLearningCompressionAlgorithm, LossyCompressionAlgorithm
-
+import numpy as np
 
 class PCACompression(NonLearningCompressionAlgorithm, LossyCompressionAlgorithm):
     name = "sklearn PCA + MLE from pickle"
@@ -22,15 +22,15 @@ class PCACompression(NonLearningCompressionAlgorithm, LossyCompressionAlgorithm)
             order_numeric = numeric.columns
             index = df.index
             pca = sklearn.decomposition.PCA(n_components=self.n_components, svd_solver='full')
-            transformed = pca.fit_transform(numeric)
+            transformed = pca.fit_transform(numeric).astype(np.float16)
             print("transformed head:", transformed[0])
             print("pca loadings: ", pca.components_.T)
             print("pca scores: ", pca.score(numeric), pca.score_samples(numeric))
             parameters = pca.get_params()
-            components = pca.components_
-            restored = pca.inverse_transform(transformed)
-            mean = pca.mean_
-            print('restored: ', restored[0])
+            components = pca.components_.astype(np.float16)
+            # restored = pca.inverse_transform(transformed)
+            mean = pca.mean_.astype(np.float16)
+            # print('restored: ', restored[0])
             print('src ', numeric.iloc[0])
             to_file = (transformed, non_numeric, order, parameters, components, mean, order_numeric, index)
             file = pickle.dumps(to_file)
@@ -45,12 +45,12 @@ class PCACompression(NonLearningCompressionAlgorithm, LossyCompressionAlgorithm)
             decompressor = zstd.ZstdDecompressor()
             decompressed = decompressor.decompress(compressed_file.read())
             from_file = pickle.loads(decompressed)
-            transformed = from_file[0]
+            transformed = from_file[0].astype(np.float64)
             non_numeric = from_file[1]
             order = from_file[2]
             parameters = from_file[3]
-            components = from_file[4]
-            mean = from_file[5]
+            components = from_file[4].astype(np.float64)
+            mean = from_file[5].astype(np.float64)
             order_numeric = from_file[6]
             index = from_file[7]
             pca = sklearn.decomposition.PCA()

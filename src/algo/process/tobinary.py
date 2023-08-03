@@ -17,4 +17,4 @@ class ConvertToBinaryProcessing(Processing):
                 open(postprocessed_file_path, 'wb') as postprocessed_file:
             decompressed_file.seek(0)
             df = pickle.load(decompressed_file)
-            df.to_csv(postprocessed_file)
+            df.to_csv(postprocessed_file, columns=df.columns)
