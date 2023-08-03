@@ -22,5 +22,7 @@ class NormalizeProcessing(Processing):
                 open(postprocessed_file_path, 'wb') as postprocessed_file:
             decompressed_file.seek(0)
             df = pickle.load(decompressed_file)
+            print(df.columns)
+            columns_before = df.columns
             df = df * self.std + self.mean
-            df.to_csv(postprocessed_file)
+            df.to_csv(postprocessed_file, columns=columns_before)

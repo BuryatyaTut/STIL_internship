@@ -47,6 +47,7 @@ class KMeansLinear:
     def is_sorted(self):
         return np.all(self.x[:-1] <= self.x[1:])
 
+    # NOTE: ssq is inlined
     def ssq(self, j: int, i: int) -> float:
         # print("i, j", i, j)
         if j >= i:
@@ -65,14 +66,40 @@ class KMeansLinear:
         rmin_prev = 0
         for i in range(imin, imax + 1, istep):
             rmin = rmin_prev
-            self.S[q, i] = self.S[q - 1, js[rmin] - 1] + self.ssq(js[rmin], i)
+            j = js[rmin]
+            # print("i, j", i, j) # inlined ssq
+            if j >= i:
+                result = 0
+            elif j > 0:
+                sji = self.sum_x_sq[i] - self.sum_x_sq[j - 1] - (self.sum_x[i] - self.sum_x[j - 1]) / (i - j + 1) * (
+                        self.sum_x[i] - self.sum_x[j - 1])  # some magnitude shenanigans to not overflow?
+                # print("sji", sji)
+                result = max(0.0, sji)
+            else:
+                sji = self.sum_x_sq[i] - self.sum_x[i] * self.sum_x[i] / (i + 1)
+                # print("sji", sji)
+                result = max(0.0, sji)
+            self.S[q, i] = self.S[q - 1, js[rmin] - 1] + result
             self.J[q, i] = js[rmin]
             for r in range(rmin + 1, js.size):
                 j_abs = js[r]
                 if j_abs < self.J[q - 1, i]: continue
                 if j_abs > i: break
 
-                Sj = self.S[q - 1, j_abs - 1] + self.ssq(j_abs, i)
+                # print("i, j", i, j) # inlined ssq
+                if j_abs >= i:
+                    result1 = 0
+                elif j_abs > 0:
+                    sji1 = self.sum_x_sq[i] - self.sum_x_sq[j_abs - 1] - (self.sum_x[i] - self.sum_x[j_abs - 1]) / (
+                                i - j_abs + 1) * (
+                                   self.sum_x[i] - self.sum_x[j_abs - 1])  # some magnitude shenanigans to not overflow?
+                    # print("sji", sji)
+                    result1 = max(0.0, sji1)
+                else:
+                    sji1 = self.sum_x_sq[i] - self.sum_x[i] * self.sum_x[i] / (i + 1)
+                    # print("sji", sji)
+                    result1 = max(0.0, sji1)
+                Sj = self.S[q - 1, j_abs - 1] + result1
                 if Sj <= self.S[q, i]:
                     self.S[q, i] = Sj
                     self.J[q, i] = js[r]
@@ -95,10 +122,35 @@ class KMeansLinear:
 
             i = imin + p * istep
             j = js_red[right]
-            Sl = self.S[q - 1, j - 1] + self.ssq(j, i)
+            # print("i, j", i, j) # inlined ssq
+            if j >= i:
+                result = 0
+            elif j > 0:
+                sji = self.sum_x_sq[i] - self.sum_x_sq[j - 1] - (self.sum_x[i] - self.sum_x[j - 1]) / (i - j + 1) * (
+                        self.sum_x[i] - self.sum_x[j - 1])  # some magnitude shenanigans to not overflow?
+                # print("sji", sji)
+                result = max(0.0, sji)
+            else:
+                sji = self.sum_x_sq[i] - self.sum_x[i] * self.sum_x[i] / (i + 1)
+                # print("sji", sji)
+                result = max(0.0, sji)
+            Sl = self.S[q - 1, j - 1] + result
 
             jplus1 = js_red[right + 1]
-            Slplus1 = self.S[q - 1, jplus1 - 1] + self.ssq(jplus1, i)
+            # print("i, j", i, j) # inlined ssq
+            if jplus1 >= i:
+                result1 = 0
+            elif jplus1 > 0:
+                sji1 = self.sum_x_sq[i] - self.sum_x_sq[jplus1 - 1] - (self.sum_x[i] - self.sum_x[jplus1 - 1]) / (
+                        i - jplus1 + 1) * (
+                               self.sum_x[i] - self.sum_x[jplus1 - 1])  # some magnitude shenanigans to not overflow?
+                # print("sji", sji)
+                result1 = max(0.0, sji1)
+            else:
+                sji1 = self.sum_x_sq[i] - self.sum_x[i] * self.sum_x[i] / (i + 1)
+                # print("sji", sji)
+                result1 = max(0.0, sji1)
+            Slplus1 = self.S[q - 1, jplus1 - 1] + result1
 
             if Sl < Slplus1 and p < N - 1:
                 left += 1
@@ -138,7 +190,20 @@ class KMeansLinear:
                 # OG: Increase r until it points to a value of at least jmin
                 r += 1
             # OG: Initialize S[q][i] and J[q][i]
-            self.S[q, i] = self.S[q - 1, js[r] - 1] + self.ssq(js[r], i)
+            j = js[r]
+            # print("i, j", i, j) # inlined ssq
+            if j >= i:
+                result = 0
+            elif j > 0:
+                sji = self.sum_x_sq[i] - self.sum_x_sq[j - 1] - (self.sum_x[i] - self.sum_x[j - 1]) / (i - j + 1) * (
+                        self.sum_x[i] - self.sum_x[j - 1])  # some magnitude shenanigans to not overflow?
+                # print("sji", sji)
+                result = max(0.0, sji)
+            else:
+                sji = self.sum_x_sq[i] - self.sum_x[i] * self.sum_x[i] / (i + 1)
+                # print("sji", sji)
+                result = max(0.0, sji)
+            self.S[q, i] = self.S[q - 1, js[r] - 1] + result
             self.J[q, i] = js[r]  # OG: rmin
 
             # OG: Look for minimum S upto jmax within js
@@ -149,7 +214,20 @@ class KMeansLinear:
 
             jmax = min(jh, i)
 
-            sjimin = self.ssq(jmax, i)  # weird init in og
+            # print("i, j", i, j) #inlined ssq
+            if jmax >= i:
+                result1 = 0
+            elif jmax > 0:
+                sji1 = self.sum_x_sq[i] - self.sum_x_sq[jmax - 1] - (self.sum_x[i] - self.sum_x[jmax - 1]) / (
+                            i - jmax + 1) * (
+                               self.sum_x[i] - self.sum_x[jmax - 1])  # some magnitude shenanigans to not overflow?
+                # print("sji", sji)
+                result1 = max(0.0, sji1)
+            else:
+                sji1 = self.sum_x_sq[i] - self.sum_x[i] * self.sum_x[i] / (i + 1)
+                # print("sji", sji)
+                result1 = max(0.0, sji1)
+            sjimin = result1  # weird init in og
 
             r += 1
             while r < n and js[r] <= jmax:
@@ -163,7 +241,20 @@ class KMeansLinear:
                     r += 1
                     continue
 
-                s = self.ssq(jabs, i)
+                # print("i, j", i, j) # inlined ssq
+                if jabs >= i:
+                    result2 = 0
+                elif jabs > 0:
+                    sji2 = self.sum_x_sq[i] - self.sum_x_sq[jabs - 1] - (self.sum_x[i] - self.sum_x[jabs - 1]) / (
+                                i - jabs + 1) * (
+                                   self.sum_x[i] - self.sum_x[jabs - 1])  # some magnitude shenanigans to not overflow?
+                    # print("sji", sji)
+                    result2 = max(0.0, sji2)
+                else:
+                    sji2 = self.sum_x_sq[i] - self.sum_x[i] * self.sum_x[i] / (i + 1)
+                    # print("sji", sji)
+                    result2 = max(0.0, sji2)
+                s = result2
                 Sj = self.S[q - 1, jabs - 1] + s
 
                 if Sj <= self.S[q, i]:
@@ -207,7 +298,14 @@ class KMeansLinear:
         max_se = (self.max_rmse ** 2) * N
 
         for i in range(self.S.shape[1]):
-            self.S[0, i] = self.ssq(0, i)
+            # print("i, j", i, j) #inlined ssq
+            if 0 >= i:
+                result = 0
+            else:
+                sji = self.sum_x_sq[i] - self.sum_x[i] * self.sum_x[i] / (i + 1)
+                # print("sji", sji)
+                result = max(0.0, sji)
+            self.S[0, i] = result
         self.J[0] = np.zeros_like(self.J[0])
 
         for q in range(1, K):
@@ -232,7 +330,7 @@ class KMeansLinear:
         N = self.J.shape[1]
         # print("backtrack")
         cluster_right = N - 1
-        cluster = np.empty(N, dtype=int)
+        cluster = np.empty(N, dtype=np.uint8)
         centers = np.empty(K)
         count = np.empty(K)
         for q in range(K - 1, -1, -1):
@@ -275,7 +373,7 @@ class KMeansLinearCompression(NonLearningCompressionAlgorithm, LossyCompressionA
     def compress(self, table_file_path, compressed_file_path):
         with open(table_file_path, 'rb') as table_file, open(compressed_file_path, 'wb') as compressed_file:
             df = pickle.load(table_file)
-            numeric = df.select_dtypes(['number']).dropna()
+            numeric = df.select_dtypes(['number'])
             non_numeric = df.select_dtypes(exclude=['number'])
             order = df.columns
             order_numeric = numeric.columns
@@ -286,6 +384,7 @@ class KMeansLinearCompression(NonLearningCompressionAlgorithm, LossyCompressionA
                 kmeans = KMeansLinear(column, np.ceil(column.size / self.raw_compression_ratio), self.max_rmse)
 
                 result = kmeans.run()
+
                 del kmeans.S
                 del kmeans.J
                 del kmeans
@@ -310,9 +409,13 @@ class KMeansLinearCompression(NonLearningCompressionAlgorithm, LossyCompressionA
             decompressed = decompressor.decompress(compressed_file.read())
             from_file = pickle.loads(decompressed)
             quantized_columns = from_file.quantized_columns
-
-            restored_numeric_df = pd.DataFrame(data=restored_numeric, index=from_file.index,
+            restored_columns = []
+            for column in quantized_columns:
+                restored_columns.append(np.array(column['centers'])[column['cluster']])
+            restored_columns = np.stack(restored_columns, axis=1)
+            restored_numeric_df = pd.DataFrame(data=restored_columns, index=from_file.index,
                                                columns=from_file.order_numeric)
             restored = pd.merge(from_file.non_numeric, restored_numeric_df, left_index=True, right_index=True)[
                 from_file.order]
+            print(restored.head())
             pickle.dump(restored, decompressed_file)
