@@ -12,7 +12,7 @@ class NormalizeProcessing(Processing):
         non_numeric = df.select_dtypes(exclude=['number'])
         df = df.select_dtypes(["number"])
         self.mean = df.mean()
-        self.std = df.std()
+        self.std = df.std().replace(to_replace=0, value=1)
         df = pd.concat([(df - self.mean) / self.std, non_numeric], axis=1)
         with open(processed_file_path, 'wb') as processed_file:
             pickle.dump(df, processed_file)
