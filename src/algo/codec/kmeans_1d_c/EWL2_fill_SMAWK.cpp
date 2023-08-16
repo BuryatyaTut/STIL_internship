@@ -1,3 +1,4 @@
+
 /* EWL2_fill_SMAWK.cpp --- a divide-and-conquer algorithm to compute a
  *   row in the dynamic programming matrix in O(n) time for equally
  *   weighted L2 univariate k-means
@@ -39,28 +40,7 @@ void reduce_in_place(int imin, int imax, int istep, int q,
                      const std::vector<ldouble> & sum_x,
                      const std::vector<ldouble> & sum_x_sq)
 {
-   /* std::cout<<"imin imax istep q js s sum_x"<<std::endl;
-    std::cout<<imin<<" "<<imax<<" "<<istep<<" "<<q<<std::endl;
-    for (auto& i : js)
-    {
-	    std::cout<<i<<" ";
-    }
-    std::cout<<std::endl;
-    for (auto& i : S)
-    {
-	    for (auto& j : i)
-	    {
-		    std::cout<<j<<" ";
-	    }
-        std::cout<<std::endl;
 
-    }
-    std::cout<<std::endl;
-    for (auto& i : sum_x)
-    {
-	    std::cout<<i<<" ";
-    }
-    std::cout<<std::endl;*/
   int N = (imax - imin) / istep + 1;
 
   js_red = js;
@@ -112,12 +92,7 @@ void reduce_in_place(int imin, int imax, int istep, int q,
   for(int r=(left+1); r < m; ++r) {
     js_red[r] = js_red[right++];
   }
-    /*std::cout<<"js_red"<<std::endl;
-  for (auto& i : js_red)
-  {
-	  std::cout<<i<<" ";
-  }
-    std::cout<<std::endl;*/
+
   js_red.resize(m);
   return;
 }
@@ -194,7 +169,7 @@ inline void find_min_from_candidates
 {
   size_t rmin_prev = (0);
   for(int i=(imin); i<=imax; i+=istep) {
-    //std::cout<<"i: "<<i<<std::endl;
+    
     size_t rmin = (rmin_prev);
 
     // Initialization of S[q][i] and J[q][i]
@@ -202,7 +177,7 @@ inline void find_min_from_candidates
       dissimilarity(js[rmin], i, sum_x, sum_x_sq);
     // ssq(js[rmin], i, sum_x, sum_x_sq, sum_w);
     J[q][i] = js[rmin];
-    //std::cout<<"js[rmin]: "<<js[rmin]<<std::endl;
+    
     for(size_t r = (rmin+1); r<js.size(); ++r) {
 
       const size_t & j_abs = (js[r]);
@@ -216,7 +191,7 @@ inline void find_min_from_candidates
       if(Sj <= S[q][i]) {
         S[q][i] = Sj;
         J[q][i] = js[r];
-        //std::cout<<"js[r]: "<<js[r]<<std::endl;
+        
         rmin_prev = r;
       }
     }

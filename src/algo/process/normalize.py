@@ -8,7 +8,7 @@ class NormalizeProcessing(Processing):
 
     def do_preprocess(self, raw_file_path, processed_file_path):
 
-        df = pd.read_csv(raw_file_path, index_col=0)
+        df = pd.read_csv(raw_file_path, index_col=0).dropna(axis=1)
         non_numeric = df.select_dtypes(exclude=['number'])
         df = df.select_dtypes(["number"])
         self.mean = df.mean()
