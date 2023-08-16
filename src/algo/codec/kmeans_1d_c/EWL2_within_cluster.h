@@ -20,9 +20,7 @@
 // Joe Song
 // Created: January 3, 2020. simplified from within_cluster.h
 
-#include <iostream>
 #include <vector>
-#include <string>
 
 #include "precision.h"
 

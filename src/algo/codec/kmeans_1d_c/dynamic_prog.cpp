@@ -22,10 +22,6 @@
 
 //#define DEBUG
 
-#include <string>
-#include <iostream>
-#include <cassert>
-#include <cmath>
 
 #include "Ckmeans.1d.dp.h"
 #include "EWL2_within_cluster.h"
@@ -35,8 +31,7 @@
 
 void backtrack(const std::vector<double> & x,
                const std::vector< std::vector< size_t > > & J,
-               int* cluster, double* centers, double* withinss,
-               double* count /*int* count*/)
+               int* cluster, double* centers)
 {
   const size_t K = J.size();
   const size_t N = J[0].size();
@@ -70,23 +65,5 @@ void backtrack(const std::vector<double> & x,
   }
 }
 
-void backtrack(const std::vector<double> & x,
-               const std::vector< std::vector< size_t > > & J,
-               std::vector<size_t> & count, const int K)
-{
-  // const int K = (int) J.size();
-  const size_t N = J[0].size();
-  size_t cluster_right = N-1;
-  size_t cluster_left;
-
-  // Backtrack the clusters from the dynamic programming matrix
-  for(int q = K-1; q >= 0; --q) {
-    cluster_left = J[q][cluster_right];
-    count[q] = cluster_right - cluster_left + 1;
-    if(q > 0) {
-      cluster_right = cluster_left - 1;
-    }
-  }
-}
 
 

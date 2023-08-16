@@ -1,4 +1,5 @@
 import pickle
+import warnings
 from multiprocessing import Pool
 
 import numpy as np
@@ -9,51 +10,47 @@ from algo.codec import NonLearningCompressionAlgorithm, LossyCompressionAlgorith
 
 
 class KMeansLinearCDTO:
-    pass
+    def __init__(self, non_numeric, order, order_numeric, index, quantized_columns):
+        self.non_numeric = non_numeric
+        self.order = order
+        self.order_numeric = order_numeric
+        self.index = index
+        self.quantized_columns = quantized_columns
 
 
 class KMeansLinearCCompression(NonLearningCompressionAlgorithm, LossyCompressionAlgorithm):
     name = "CKMeans.1d.dp (C bindings)"
 
-
-    def __init__(self, max_rmse, raw_compression_ratio=1, threads=1):
+    def __init__(self, max_rmses, raw_compression_ratio=1, threads=1):
         super().__init__()
+        warnings.warn("This class is broken for the sake of being fit to exact task.")
         self.raw_compression_ratio = raw_compression_ratio
-        self.max_rmse = max_rmse
+        self.max_rmses = max_rmses
         self.threads = threads
-
 
     def compress(self, table_file_path, compressed_file_path):
         with open(table_file_path, 'rb') as table_file, open(compressed_file_path, 'wb') as compressed_file:
             df = pickle.load(table_file)
-            numeric = df.select_dtypes(['number']).astype(np.longdouble)
+            numeric = df.select_dtypes(['number']).astype(np.double)
             non_numeric = df.select_dtypes(exclude=['number'])
             order = df.columns
             order_numeric = numeric.columns
             index = df.index
-            quantized_columns = []
-            print(numeric)
             numeric_np = numeric.to_numpy().T
-            print(numeric.shape)
-            clusters = np.zeros(shape=(numeric_np.shape[0], numeric_np.shape[1]), dtype=np.int64)
-            centers = np.zeros(shape=(numeric_np.shape[0], numeric_np.shape[1]), dtype=np.longdouble)
-            kopts = np.zeros(shape=(numeric_np.shape[0],), dtype=np.int64)
-            _ckmeans_1d_dp.ckmeans(numeric_np, self.max_rmse,
-                                   np.ceil(numeric_np.shape[1] / self.raw_compression_ratio).astype(int),
-                                   clusters, centers, kopts, self.threads)
+            # print(numeric)
+            # print(numeric.shape)
 
-            print(kopts)
-            quantized_columns = [{"cluster": clusters[i], "centers": centers[i, :kopts[i]]} for i in
+            centers = np.zeros(shape=(numeric_np.shape[0], numeric_np.shape[1]), dtype=np.double)
+            kopts = np.zeros(shape=(numeric_np.shape[0],), dtype=np.int64)
+            _ckmeans_1d_dp.ckmeans(numeric_np, self.max_rmses,
+                                   centers, kopts, self.threads)
+
+            quantized_columns = [{"centers": centers[i, :kopts[i]]} for i in
                                  range(numeric_np.shape[0])]
 
-
-            output = KMeansLinearCDTO()
-            output.non_numeric = non_numeric
-            output.order = order
-            output.order_numeric = order_numeric
-            output.index = index
-            output.quantized_columns = quantized_columns
+            output = KMeansLinearCDTO(non_numeric, order, order_numeric, index, quantized_columns)
             file = pickle.dumps(output)
+
             compressor = zstd.ZstdCompressor(level=22)
             compressed_data = compressor.compress(file)
             compressed_file.write(compressed_data)

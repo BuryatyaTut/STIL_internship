@@ -48,18 +48,4 @@ void fill_row_q_SMAWK(
     const std::vector<ldouble> & sum_x,
     const std::vector<ldouble> & sum_x_sq);
 
-void fill_row_q(
-    int imin, int imax, int q,
-    std::vector< std::vector<ldouble> > & S,
-    std::vector< std::vector<size_t> > & J,
-    const std::vector<ldouble> & sum_x,
-    const std::vector<ldouble> & sum_x_sq);
-
-void fill_row_q_log_linear(
-    int imin, int imax, int q, int jmin, int jmax,
-    std::vector< std::vector<ldouble> > & S,
-    std::vector< std::vector<size_t> > & J,
-    const std::vector<ldouble> & sum_x,
-    const std::vector<ldouble> & sum_x_sq);
-
 }
