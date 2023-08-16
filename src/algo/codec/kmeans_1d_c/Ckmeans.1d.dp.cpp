@@ -1,3 +1,4 @@
+
 /* Ckmeans_1d_dp.cpp -- Performs 1-D k-means by a dynamic programming
  * approach that is guaranteed to be optimal.
  *
@@ -271,3 +272,4 @@ long long kmeans_1d_dp(const double* x, const size_t N, const double* y,
   }
     
 }  //end of kmeans_1d_dp()
+

@@ -1,3 +1,4 @@
+
 /* EWL2_fill_SMAWK.cpp --- a divide-and-conquer algorithm to compute a
  *   row in the dynamic programming matrix in O(n) time for equally
  *   weighted L2 univariate k-means

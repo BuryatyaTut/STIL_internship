@@ -1,3 +1,4 @@
+
 import os
 import subprocess
 import sys
@@ -51,3 +52,4 @@ setup(
     ext_modules=[CMakeExtension("ckmeans-1d-dp-stil")],
     cmdclass={"build_ext": CMakeBuild},
 )
+

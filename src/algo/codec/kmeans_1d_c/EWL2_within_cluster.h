@@ -1,3 +1,4 @@
+
 /* EWL2_within_cluster.h---dissimilarity within a cluster
  *
  * Copyright (C) 2017--2020 Mingzhou Song
@@ -62,3 +63,4 @@ inline ldouble dissimilarity(
   return d;
 }
 }
+

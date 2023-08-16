@@ -1,3 +1,4 @@
+
 /* EWL2_dynamic_prog.cpp  --- Equally weighted L2 univariate k-means algorithms
  *
  * Copyright (C) 2016-2020 Mingzhou Song
@@ -140,3 +141,4 @@ long long fill_dp_matrix(const std::vector<double> & x,
 
 }
 }
+

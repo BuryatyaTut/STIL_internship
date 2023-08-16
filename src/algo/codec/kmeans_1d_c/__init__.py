@@ -15,11 +15,13 @@ class KMeansLinearCDTO:
 class KMeansLinearCCompression(NonLearningCompressionAlgorithm, LossyCompressionAlgorithm):
     name = "CKMeans.1d.dp (C bindings)"
 
+
     def __init__(self, max_rmse, raw_compression_ratio=1, threads=1):
         super().__init__()
         self.raw_compression_ratio = raw_compression_ratio
         self.max_rmse = max_rmse
         self.threads = threads
+
 
     def compress(self, table_file_path, compressed_file_path):
         with open(table_file_path, 'rb') as table_file, open(compressed_file_path, 'wb') as compressed_file:
@@ -43,6 +45,7 @@ class KMeansLinearCCompression(NonLearningCompressionAlgorithm, LossyCompression
             print(kopts)
             quantized_columns = [{"cluster": clusters[i], "centers": centers[i, :kopts[i]]} for i in
                                  range(numeric_np.shape[0])]
+
 
             output = KMeansLinearCDTO()
             output.non_numeric = non_numeric
