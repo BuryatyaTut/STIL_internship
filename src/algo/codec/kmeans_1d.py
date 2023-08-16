@@ -322,7 +322,7 @@ class KMeansLinear:
                 self.J = self.J[:q]
                 return q
             # print("S: ",S)
-            # print("J: ",J)
+            print("J: ",self.J)
         return K
 
     def backtrack(self):
@@ -385,8 +385,6 @@ class KMeansLinearCompression(NonLearningCompressionAlgorithm, LossyCompressionA
 
                 result = kmeans.run()
 
-                del kmeans.S
-                del kmeans.J
                 del kmeans
                 quantized_columns.append(result)
                 del result

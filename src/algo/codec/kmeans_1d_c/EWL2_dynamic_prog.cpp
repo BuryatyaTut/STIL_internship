@@ -81,7 +81,7 @@ long long fill_dp_matrix(const std::vector<double> & x,
         std::vector<std::vector<size_t>> JJ(J);
 
 #endif
-
+        
         for(long long q = 1; q < K; ++q) {
 				J.emplace_back(N);
 				S.emplace_back(N); //uses way less mem, but is probably very slow

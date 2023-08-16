@@ -125,7 +125,7 @@ size_t numberOfUnique(ForwardIterator first, ForwardIterator last)
   return nUnique;
 }
 
-static const double * px;
+thread_local const double * px; //used to be static
 bool compi(size_t i, size_t j)
 {
   return px[i] < px[j];
@@ -137,8 +137,13 @@ long long kmeans_1d_dp(const double* x, const size_t N, const double* y,
                        double* withinss, double* size,
                        // int* size,
                        double* BIC,
-                       double max_rmse)
+                       double max_rmse,
+						std::reference_wrapper<std::counting_semaphore<>> thread_cnt_ref)
+
 {
+
+    thread_cnt_ref.get().acquire();
+    
   // Input:
   //  x -- an array of double precision numbers, not necessarily sorted
   //  Kmin -- the minimum number of clusters expected
@@ -249,6 +254,7 @@ long long kmeans_1d_dp(const double* x, const size_t N, const double* y,
       // Obtain clustering on data in the original order
       cluster[order[i]] = cluster_sorted[i];
     }
+    thread_cnt_ref.get().release();
     return Kopt;
 
   } else {  // A single cluster that contains all elements
@@ -260,6 +266,7 @@ long long kmeans_1d_dp(const double* x, const size_t N, const double* y,
     centers[0] = x[0];
     //withinss[0] = 0.0;
     //size[0] = N;
+    thread_cnt_ref.get().release();
     return 1;
   }
     

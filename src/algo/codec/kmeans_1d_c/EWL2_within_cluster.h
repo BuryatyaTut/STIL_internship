@@ -45,7 +45,7 @@ inline ldouble ssq(
   }
 
   sji = (sji < 0) ? 0 : sji;
-    //std::cout<<"sji: "<<sji<<std::endl;
+    
   return sji;
 }
 

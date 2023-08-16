@@ -15,10 +15,11 @@ class KMeansLinearCDTO:
 class KMeansLinearCCompression(NonLearningCompressionAlgorithm, LossyCompressionAlgorithm):
     name = "CKMeans.1d.dp (C bindings)"
 
-    def __init__(self, max_rmse, raw_compression_ratio=1):
+    def __init__(self, max_rmse, raw_compression_ratio=1, threads=1):
         super().__init__()
         self.raw_compression_ratio = raw_compression_ratio
         self.max_rmse = max_rmse
+        self.threads = threads
 
     def compress(self, table_file_path, compressed_file_path):
         with open(table_file_path, 'rb') as table_file, open(compressed_file_path, 'wb') as compressed_file:
@@ -30,19 +31,19 @@ class KMeansLinearCCompression(NonLearningCompressionAlgorithm, LossyCompression
             index = df.index
             quantized_columns = []
             print(numeric)
-            for column in numeric.to_numpy().T:
-                clusters = np.zeros(shape=(column.size,), dtype=np.int64)
-                centers = np.zeros(shape=(column.size,), dtype=np.longdouble)
-                column = np.asarray(column.astype(np.longdouble))
-                kOpt = _ckmeans_1d_dp.ckmeans(column, self.max_rmse,
-                                              np.ceil(column.size / self.raw_compression_ratio).astype(int),
-                                              clusters, centers)
-                # kmeans = KMeansLinear(column, np.ceil(column.size / self.raw_compression_ratio), self.max_rmse)
+            numeric_np = numeric.to_numpy().T
+            print(numeric.shape)
+            clusters = np.zeros(shape=(numeric_np.shape[0], numeric_np.shape[1]), dtype=np.int64)
+            centers = np.zeros(shape=(numeric_np.shape[0], numeric_np.shape[1]), dtype=np.longdouble)
+            kopts = np.zeros(shape=(numeric_np.shape[0],), dtype=np.int64)
+            _ckmeans_1d_dp.ckmeans(numeric_np, self.max_rmse,
+                                   np.ceil(numeric_np.shape[1] / self.raw_compression_ratio).astype(int),
+                                   clusters, centers, kopts, self.threads)
 
-                # result = kmeans.run()
-                result = {"cluster": clusters, "centers": centers[:kOpt]}
-                quantized_columns.append(result)
-                del result
+            print(kopts)
+            quantized_columns = [{"cluster": clusters[i], "centers": centers[i, :kopts[i]]} for i in
+                                 range(numeric_np.shape[0])]
+
             output = KMeansLinearCDTO()
             output.non_numeric = non_numeric
             output.order = order
@@ -64,6 +65,7 @@ class KMeansLinearCCompression(NonLearningCompressionAlgorithm, LossyCompression
             quantized_columns = from_file.quantized_columns
             restored_columns = []
             for column in quantized_columns:
+                print(column['cluster'])
                 restored_columns.append(np.array(column['centers'])[column['cluster']])
             restored_columns = np.stack(restored_columns, axis=1)
             restored_numeric_df = pd.DataFrame(data=restored_columns, index=from_file.index,

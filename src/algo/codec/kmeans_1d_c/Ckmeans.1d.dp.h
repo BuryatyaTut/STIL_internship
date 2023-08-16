@@ -26,7 +26,9 @@
  Created: Oct 10, 2010
  */
 
+#include <atomic>
 #include <cstddef> // For size_t
+#include <semaphore>
 #include <vector>
 #include <string>
 
@@ -107,7 +109,8 @@ long long kmeans_1d_dp(
 	double* withinss, double* size,
 	// int* size,
 	double* BIC,
-	double max_rmse);
+	double max_rmse,
+    std::reference_wrapper<std::counting_semaphore<>> counter);
 
 
 void backtrack(
