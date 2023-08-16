@@ -84,7 +84,7 @@ class Scaffold:
         self.algorithm.compress(filenames["preprocessed"], filenames["compressed"])
 
         if self.logs:
-            compression_rate = get_compression_rate_2(self.table_path, filenames["compressed"])
+            compression_rate = get_compression_rate_2(filenames["preprocessed"], filenames["compressed"])
 
             self.benchmark["compression_rate"] = compression_rate
         return 0
