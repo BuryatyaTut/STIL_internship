@@ -101,12 +101,9 @@
 #include "EWL2.h"
 
 #include <algorithm>
-#include <cmath>
 #include <iostream>
-#include <string>
 #include <vector>
 #include <cassert>
-#include <cstring>
 
 template <class ForwardIterator>
 size_t numberOfUnique(ForwardIterator first, ForwardIterator last)
@@ -132,12 +129,8 @@ bool compi(size_t i, size_t j)
   return px[i] < px[j];
 }
 
-long long kmeans_1d_dp(const double* x, const size_t N, const double* y,
-                       size_t Kmin, size_t Kmax,
-                       long long* cluster, double* centers,
-                       double* withinss, double* size,
-                       // int* size,
-                       double* BIC,
+long long kmeans_1d_dp(const double* x, const size_t N,
+                       double* centers,
                        double max_rmse,
 						std::reference_wrapper<std::counting_semaphore<>> thread_cnt_ref)
 
@@ -200,28 +193,12 @@ long long kmeans_1d_dp(const double* x, const size_t N, const double* y,
       x_sorted[i] = x[order[i]];
     }
   }
-
-  // check to see if unequal weight is provided
-  if(y != NULL) {
-    is_equally_weighted = true;
-    for(size_t i=1; i<N; ++i) {
-      if(y[i] != y[i-1]) {
-        is_equally_weighted = false;
-        break;
-      }
-    }
-  }
-
-  if(! is_equally_weighted) {
-    y_sorted.resize(N);
-    for(size_t i=0; i<order.size(); ++i) {
-      y_sorted[i] = y[order[i]];
-    }
-  }
+  
+  
 
   const size_t nUnique = numberOfUnique(x_sorted.begin(), x_sorted.end());
 
-  Kmax = nUnique < Kmax ? nUnique : Kmax;
+  const size_t Kmax = nUnique;
 
   if(nUnique > 1) { // The case when not all elements are equal.
 
@@ -244,25 +221,18 @@ long long kmeans_1d_dp(const double* x, const size_t N, const double* y,
     std::vector<int> cluster_sorted(N);
 
     // Backtrack to find the clusters beginning and ending indices
-    backtrack(x_sorted, J, &cluster_sorted[0], centers, withinss, size);
+    backtrack(x_sorted, J, &cluster_sorted[0], centers);
     J.clear(); //J is not needed anymore
 
 #ifdef DEBUG
     std::cout << "backtrack done." << std::endl;
 #endif
 
-  	for(size_t i = 0; i < N; ++i) {
-      // Obtain clustering on data in the original order
-      cluster[order[i]] = cluster_sorted[i];
-    }
     thread_cnt_ref.get().release();
     return Kopt;
 
   } else {  // A single cluster that contains all elements
 
-    for(size_t i=0; i<N; ++i) {
-      cluster[i] = 0;
-    }
 
     centers[0] = x[0];
     //withinss[0] = 0.0;

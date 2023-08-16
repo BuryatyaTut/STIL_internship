@@ -395,6 +395,8 @@ class KMeansLinearCompression(NonLearningCompressionAlgorithm, LossyCompressionA
             output.index = index
             output.quantized_columns = quantized_columns
             file = pickle.dumps(output)
+            with open(f'{table_file_path}_prezstd_{self.raw_compression_ratio}_{self.max_rmse}', 'w') as f:
+                f.write(str(len(file)))
             compressor = zstd.ZstdCompressor(level=22)
             compressed_data = compressor.compress(file)
             compressed_file.write(compressed_data)
