@@ -132,12 +132,14 @@ bool compi(size_t i, size_t j)
 long long kmeans_1d_dp(const double* x, const size_t N,
                        double* centers,
                        double max_rmse,
-						std::reference_wrapper<std::counting_semaphore<>> thread_cnt_ref)
+                       long long maxK,
+                       std::reference_wrapper<std::counting_semaphore<>> thread_cnt_ref)
 
 {
 
     thread_cnt_ref.get().acquire();
-    
+    //std::string res = std::to_string(max_rmse) +'\n';
+    //std::cout<<res;
   // Input:
   //  x -- an array of double precision numbers, not necessarily sorted
   //  Kmin -- the minimum number of clusters expected
@@ -198,7 +200,7 @@ long long kmeans_1d_dp(const double* x, const size_t N,
 
   const size_t nUnique = numberOfUnique(x_sorted.begin(), x_sorted.end());
 
-  const size_t Kmax = nUnique;
+  const size_t Kmax = nUnique > maxK ? maxK : nUnique;
 
   if(nUnique > 1) { // The case when not all elements are equal.
 

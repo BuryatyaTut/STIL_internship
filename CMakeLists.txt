@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.5)
+project(ckmeans_1d_dp_stil)
+find_package(pybind11 CONFIG)
+add_compile_options("-O3 -GS- -Qipo -QxHOST -fp:fast -MT")
+set (CMAKE_CXX_STANDARD 20)
+add_link_options("-qipo")
+pybind11_add_module(_ckmeans_1d_dp src/algo/codec/kmeans_1d_c/_ckmeans_1d_dp.cpp src/algo/codec/kmeans_1d_c/Ckmeans.1d.dp.cpp src/algo/codec/kmeans_1d_c/dynamic_prog.cpp src/algo/codec/kmeans_1d_c/EWL2_dynamic_prog.cpp src/algo/codec/kmeans_1d_c/EWL2_fill_SMAWK.cpp)
+pybind11_add_module(_kmeans_nlogu src/algo/codec/kmeans_1d_nlogu_c/_kmeans_nlogu.cpp src/algo/codec/kmeans_1d_nlogu_c/KMeans.cpp src/algo/codec/kmeans_1d_nlogu_c/metrics.cpp src/algo/codec/kmeans_1d_nlogu_c/SMAWK.cpp)
