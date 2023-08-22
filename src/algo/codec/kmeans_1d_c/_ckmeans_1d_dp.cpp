@@ -12,7 +12,8 @@ void Ckmeans_1d_dp(py::array_t<double, py::array::c_style | py::array::forcecast
                    py::array_t<double, py::array::c_style | py::array::forcecast> max_rmses,
                    py::array_t<double, py::array::c_style | py::array::forcecast> centers,
                    py::array_t<long long, py::array::c_style | py::array::forcecast> k_opts,
-					const int nThreads)
+					const int nThreads,
+					long long maxK)
 {
     py::buffer_info bufx = x.request();
     
@@ -24,13 +25,25 @@ void Ckmeans_1d_dp(py::array_t<double, py::array::c_style | py::array::forcecast
     size_t length =  x.shape(1);
     size_t ncols = x.shape(0);
     std::counting_semaphore<> cs{nThreads};
-    //NOTE: centers are modified and are to be treated as return values
+    //NOTE: cluster and centers are modified and are to be treated as return values
+
     std::vector<std::future<long long>> jobs;
-    
+
     for (size_t col = 0; col < ncols; col++)
     {
-        
-        jobs.emplace_back(std::async(std::launch::async | std::launch::deferred , kmeans_1d_dp, xp + col * length, length, center_p + col * length, max_rmses_p[col], std::ref(cs)));
+        jobs.emplace_back(std::async(
+            std::launch::async | std::launch::deferred,
+
+            kmeans_1d_dp, 
+            
+            xp + col * length,
+            length, 
+            center_p + col * length, 
+            max_rmses_p[col], 
+            maxK, 
+            std::ref(cs)
+			)
+        );
        
     }
     for (size_t col = 0; col < ncols; col++)

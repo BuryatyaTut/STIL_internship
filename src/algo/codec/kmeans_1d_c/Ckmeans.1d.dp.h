@@ -66,4 +66,5 @@ long long kmeans_1d_dp(
 	const double* x, size_t N,
 	double* centers,
 	double max_rmse,
+    long long maxK,
     std::reference_wrapper<std::counting_semaphore<>> counter);
