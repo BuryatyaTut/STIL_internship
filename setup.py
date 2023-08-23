@@ -25,7 +25,9 @@ class CMakeBuild(build_ext):
         extdir = ext_fullpath.parent.resolve()
 
         cmake_args = [
-
+            f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={extdir}{os.sep}",
+            f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE={extdir}{os.sep}",
+            f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG={extdir}{os.sep}",
             f"-DCMAKE_RUNTIME_OUTPUT_DIRECTORY={extdir}{os.sep}",
             f"-DCMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE={extdir}{os.sep}",
             f"-DCMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG={extdir}{os.sep}",

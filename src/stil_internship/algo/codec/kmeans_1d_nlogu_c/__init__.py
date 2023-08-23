@@ -2,11 +2,11 @@ import pickle
 import warnings
 
 import numpy as np
-import _kmeans_nlogu
 
+import _kmeans_nlogu
 import pandas as pd
 import zstandard as zstd
-from algo.codec import NonLearningCompressionAlgorithm, LossyCompressionAlgorithm
+from stil_internship.algo.codec import NonLearningCompressionAlgorithm, LossyCompressionAlgorithm
 
 
 class KMeansLogLinearCDTO:
@@ -49,7 +49,7 @@ class KMeansLogLinearCCompression(NonLearningCompressionAlgorithm, LossyCompress
                                  range(numeric_np.shape[0])]
             print('quantized columns:')
             print(quantized_columns)
-            output = KMeansLinearCDTO(non_numeric, order, order_numeric, index, quantized_columns)
+            output = KMeansLogLinearCDTO(non_numeric, order, order_numeric, index, quantized_columns)
             file = pickle.dumps(output)
 
             compressor = zstd.ZstdCompressor(level=22)

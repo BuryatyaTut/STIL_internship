@@ -3,4 +3,4 @@ set(SRC src/Ckmeans.1d.dp.cpp src/dynamic_prog.cpp src/EWL2_dynamic_prog.cpp src
 set(SRC_BINDINGS src/_ckmeans_1d_dp.cpp)
 include_directories(${INCLUDE_DIR})
 
-pybind11_add_module(_kmeans_1d_c ${SRC} ${SRC_BINDINGS})
+pybind11_add_module(_ckmeans_1d_dp ${SRC} ${SRC_BINDINGS})

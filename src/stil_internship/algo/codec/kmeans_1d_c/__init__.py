@@ -7,7 +7,7 @@ import _ckmeans_1d_dp
 
 import pandas as pd
 import zstandard as zstd
-from algo.codec import NonLearningCompressionAlgorithm, LossyCompressionAlgorithm
+from stil_internship.algo.codec import NonLearningCompressionAlgorithm, LossyCompressionAlgorithm
 
 
 class KMeansLinearCDTO:
