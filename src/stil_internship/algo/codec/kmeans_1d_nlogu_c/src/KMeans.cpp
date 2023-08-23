@@ -92,8 +92,8 @@ long long bin_search(double* x, long long N, double max_rmse, double* borders, d
 
     double se;
     double max_se = max_rmse * max_rmse * N;
-    std::vector<double> F(N+1); //top min values
-    std::vector<double> H(N + 1); //bottom min values
+    std::vector<double> F(N+1, INFINITY); //top min values
+    std::vector<double> H(N + 1, INFINITY); //bottom min values
     std::vector<long long> J(N + 1); //top backtracking indices
     std::vector<long long> Jbottom(N+1); //bottom backtracking indices
 
