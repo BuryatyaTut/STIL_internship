@@ -1,0 +1,2 @@
+add_subdirectory(kmeans_1d_c)
+add_subdirectory(kmeans_1d_nlogu_c)

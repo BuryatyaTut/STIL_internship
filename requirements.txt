@@ -6,3 +6,4 @@ brotli~=1.0.9
 seaborn~=0.12.2
 setuptools~=68.0.0
 pybind11~=2.11.1
+tox~=4.9.0
