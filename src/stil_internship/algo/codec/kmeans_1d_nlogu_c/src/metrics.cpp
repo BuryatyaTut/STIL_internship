@@ -3,7 +3,7 @@ void calculate_sum_x(double* x, long long N, double* sum_x_sq, double* sum_x)
 {
 	sum_x_sq[0] = x[0] * x[0];
 	sum_x[0] = x[0];
-	for (long long i = 1; i <= N; ++i)
+	for (long long i = 1; i < N; ++i)
 	{
 		sum_x_sq[i] = sum_x_sq[i-1] + x[i] * x[i];
 		sum_x[i] = sum_x[i-1] + x[i];

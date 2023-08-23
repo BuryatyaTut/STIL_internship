@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <numeric>
+#include <vector>
 
 #include "SMAWK.h"
 #include "metrics.h"
@@ -81,9 +82,9 @@ long long bin_search(double* x, long long N, double max_rmse, double* borders, d
 
     std::sort(x, x + N);
 
-    auto x_prefix_sum_sq = new double[N + 1];
-    auto x_prefix_sum = new double[N + 1];
-    calculate_sum_x(x, N, x_prefix_sum_sq, x_prefix_sum);
+    std::vector<double> x_prefix_sum_sq(N+1);
+    std::vector<double> x_prefix_sum(N+1);
+    calculate_sum_x(x, N, x_prefix_sum_sq.data(), x_prefix_sum.data());
 
     //NOTE: the dmin/dmax bounds are really wrong.
     double taumin = 0;//dminmax.dmin / 2 * dminmax.dmin;
@@ -91,16 +92,16 @@ long long bin_search(double* x, long long N, double max_rmse, double* borders, d
 
     double se;
     double max_se = max_rmse * max_rmse * N;
-    auto F = new double[N + 1]; //top min values
-    auto H = new double[N + 1]; //bottom min values
-    auto J = new long long[N + 1]; //top backtracking indices
-    auto Jbottom = new long long[N + 1]; //bottom backtracking indices
+    std::vector<double> F(N+1); //top min values
+    std::vector<double> H(N + 1); //bottom min values
+    std::vector<long long> J(N + 1); //top backtracking indices
+    std::vector<long long> Jbottom(N+1); //bottom backtracking indices
 
 
-    try_kmeans(N, x_prefix_sum, x_prefix_sum_sq, taumax, F, H, J, Jbottom);
-    size_t kMin = backtrack(N, J, borders, x, centers);
-    try_kmeans(N, x_prefix_sum, x_prefix_sum_sq, taumin, F, H, J, Jbottom);
-    size_t kMax = backtrack(N, J, borders, x, centers);
+    try_kmeans(N, x_prefix_sum.data(), x_prefix_sum_sq.data(), taumax, F.data(), H.data(), J.data(), Jbottom.data());
+    size_t kMin = backtrack(N, J.data(), borders, x, centers);
+    try_kmeans(N, x_prefix_sum.data(), x_prefix_sum_sq.data(), taumin, F.data(), H.data(), J.data(), Jbottom.data());
+    size_t kMax = backtrack(N, J.data(), borders, x, centers);
 
 
     int cnt_iter = 0;
@@ -112,12 +113,12 @@ long long bin_search(double* x, long long N, double max_rmse, double* borders, d
     while ((taumax > taumin) && (taumax - taumin >= (taumax + taumin) / 2e10)) //should probably introduce epsilon?
     {
         cnt_iter++;
-        try_kmeans(N, x_prefix_sum, x_prefix_sum_sq, 2, F, H, J, Jbottom);
+        try_kmeans(N, x_prefix_sum.data(), x_prefix_sum_sq.data(), (taumax + taumin) / 2, F.data(), H.data(), J.data(), Jbottom.data());
 
 
-        size_t kOpt = backtrack(N, J, borders, x, centers);
+        size_t kOpt = backtrack(N, J.data(), borders, x, centers);
         se = F[N] - kOpt * (taumin + taumax) / 2;
-        //*res_rmse = std::sqrt(se / N);
+        *res_rmse = std::sqrt(se / N);
 
         if (se > max_se)
         {
@@ -134,12 +135,6 @@ long long bin_search(double* x, long long N, double max_rmse, double* borders, d
         {
         	
         	*res_rmse = std::sqrt((F[N] - kOpt * (taumin + taumax) / 2 )/ N);
-        	delete[] F;
-			delete[] H;
-        	delete[] J;
-        	delete[] Jbottom;
-        	delete[] x_prefix_sum_sq;
-        	delete[] x_prefix_sum;
         	return kOpt;
         }
     }
@@ -147,14 +142,8 @@ long long bin_search(double* x, long long N, double max_rmse, double* borders, d
     std::cout<<"cnt_iter: "<<cnt_iter<<std::endl;
 #endif
     
-    size_t kOpt = backtrack(N, J, borders, x, centers);
+    size_t kOpt = backtrack(N, J.data(), borders, x, centers);
     *res_rmse = std::sqrt((F[N] - kOpt * (taumin + taumax) / 2 ) / N);
-    delete[] F;
-    delete[] H;
-    delete[] J;
-    delete[] Jbottom;
-    delete[] x_prefix_sum_sq;
-    delete[] x_prefix_sum;
     return kOpt;
 
 }

@@ -21,10 +21,8 @@
 // Joe Song
 // Created: January 3, 2020
 #include <algorithm>
-#include <numeric>
 #include <vector>
 
-#include "KMeans.h"
 #include "metrics.h"
 void reduce_in_place(long long imin, long long imax, long long istep, 
 					 const std::vector<long long> & js,
@@ -124,7 +122,7 @@ inline void fill_even_positions
 	long long jmax = std::min(jh, i);
 
 	double sjimin(
-		w( i,jmax, sum_x, sum_x_sq, tau, N)
+		w( jmax,i, sum_x, sum_x_sq, tau, N)
 	  // ssq(jmax, i, sum_x, sum_x_sq, sum_w)
 	);
 
@@ -167,7 +165,9 @@ inline void find_min_from_candidates
  size_t N)
 {
   long long rmin_prev = 0;
-  for(long long i=imin; i<=imax; i+=istep) {
+  for(long long i=imin; i<=imax; i+=istep) { //find_min_from candidates is only ever called with imin<=imax, why is this even needed
+											 //unless istep can be negative or zero, which would be extremely weird
+											 //wait no, this might actually be useful when we receive a 1xN matrix and want to populate all the J's
 	
 	long long rmin = (rmin_prev);
 

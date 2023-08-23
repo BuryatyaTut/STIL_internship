@@ -33,11 +33,11 @@ PYBIND11_MODULE(_kmeans_nlogu, m)
 }
 int main()
 {
-	double x[5] = {1.0, 2.0, 4.0, 8.0, 16.0};
-	auto *borders = new double[6];
-	auto *res_rmse = new double[6];
-	auto *centers = new double[6];
-	long long kopt = bin_search(x, 5,0.0000001, borders, res_rmse, centers);
+	std::vector x = {1.0, 2.0, 3.0, 4.0, 5.0};
+	std::vector<double> borders(x.size());
+	std::vector<double> res_rmse(x.size());
+	std::vector<double> centers(x.size());
+	long long kopt = bin_search(x.data(), 5,0.0000001, borders.data(), res_rmse.data(), centers.data());
 
 	std::cout << "Kopt: " << kopt << std::endl << "Cluster borders:" << std::endl;
 
@@ -45,7 +45,6 @@ int main()
 	{
 		std::cout<<borders[i]<<std::endl;
 	}
-
-	delete[] borders;
+	
 	return 0; 
 }

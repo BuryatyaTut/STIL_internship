@@ -37,7 +37,7 @@ class CMakeBuild(build_ext):
 
         ]
         build_args = [
-            #"--config Release"
+            "--config Release"
         ]
         build_temp = Path(self.build_temp) / ext.name
         if not build_temp.exists():
