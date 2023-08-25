@@ -9,3 +9,7 @@ data/
 build/
 dist/
 *egg-info*
+.vs
+*.exe
+.tox/   
+*.user
