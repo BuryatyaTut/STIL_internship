@@ -66,6 +66,29 @@ void try_kmeans(long long N,double* x_prefix_sum, double* x_prefix_sum_sq, doubl
 
     }
 }
+typedef struct dminmax
+{
+    double dmin, taumax;
+} dminmax;
+dminmax d_min(double* x, long long N, double* sum_x, double* sum_x_sq)
+{
+    double dmin = x[1] - x[0];
+    double min_ = INFINITY;
+    double max_ = -INFINITY;
+    double taumax = INFINITY;
+    for (int i = 2; i < N; ++i)
+    {
+        dmin = std::min(dmin, x[i] - x[i-1]);
+    }
+    double opt2 = INFINITY;
+    for (int i = 1; i < N; ++i)
+    {
+	    opt2 = std::min(opt2, w(0, i, sum_x, sum_x_sq, 0, N) + w(i, N, sum_x, sum_x_sq, 0, N));
+    }
+    taumax = w(0, N, sum_x, sum_x_sq, 0, N) - opt2;
+    
+    return {dmin, taumax};
+}
 long long KMeans(double* x, long long N, double max_rmse, double* borders, double* res_rmse, double* centers)
 {
 	std::sort(x, x + N);
@@ -74,11 +97,14 @@ long long KMeans(double* x, long long N, double max_rmse, double* borders, doubl
     std::vector<double> x_prefix_sum(N+1);
 
     calculate_sum_x(x, N, x_prefix_sum_sq.data(), x_prefix_sum.data());
-
+    dminmax bounds = d_min(x, N, x_prefix_sum.data(), x_prefix_sum_sq.data());
     //NOTE: the dmin/dmax bounds are really wrong.
-    double taumin = 0;
-    double taumax = 2;//this might be wrong, should check
-
+    //The bounds depend __heavily__ on data and either
+    //limit the potential values of K if the bounds are too tight,
+    //or cause numerical instability when they're too loose.
+    double taumin = bounds.dmin / 2 * bounds.dmin * 0.99;
+    double taumax = bounds.taumax * 1.01;//this might be wrong, should check
+        
     double max_se = max_rmse * max_rmse * N;
     
     //dminmax dminmax = d_min(x, N);
@@ -124,7 +150,7 @@ double bin_search(
     double taumin_l = taumin, taumax_l = taumax; //local copies
     long long cnt_iter = 0, kOpt;
     double taucheck, se;
-    while (taumax_l - taumin_l >= epsilon)
+    while (taumax_l - taumin_l >= (taumax_l + taumin_l) * epsilon)
     {
         cnt_iter++;
         taucheck = (taumax_l + taumin_l) / 2;
