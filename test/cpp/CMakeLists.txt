@@ -13,6 +13,7 @@ set(KMEANS_1D_NLOGU_INCLUDE_DIR ${KMEANS_1D_NLOGU_ROOT_DIR}/include)
 set(KMEANS_1D_NLOGU_SRC_DIR ${KMEANS_1D_NLOGU_ROOT_DIR}/src)
 set(TEST_INCLUDE_DIR ${INCLUDE_DIR} ${KMEANS_1D_NLOGU_INCLUDE_DIR})
 
+
 add_executable(
   stil_internship_test	
   "test_metrics.cpp"
@@ -23,6 +24,7 @@ add_executable(
   ${KMEANS_1D_NLOGU_SRC_DIR}/KMeans.cpp
   ${KMEANS_1D_NLOGU_SRC_DIR}/SMAWK.cpp
  "test_KMeans.cpp" "test_SMAWK.cpp")
+
 add_compile_definitions(TEST_SUITE_COMPILATION)
 target_include_directories(stil_internship_test PRIVATE ${TEST_INCLUDE_DIR})
 target_link_libraries(
@@ -30,7 +32,6 @@ target_link_libraries(
   _kmeans_nlogu
   GTest::gtest_main
 )
-
 include(GoogleTest)
 
 gtest_discover_tests(stil_internship_test)

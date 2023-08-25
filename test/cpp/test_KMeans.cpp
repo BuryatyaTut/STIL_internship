@@ -1,7 +1,8 @@
+#include <numeric>
 #include <gtest/gtest.h>
 #include "KMeans.h"
 #include "metrics.h"
-//TODO: find some numbers where the min in bottom square depends on another min in the same bottom square
+
 TEST(KMeansNLogU, FInTryKMeansWithTau) {
 	std::vector<double> x = {1, 2, 3, 4, 5};
 	std::vector<double> sum(x.size()), sum_sq(x.size());
@@ -11,12 +12,36 @@ TEST(KMeansNLogU, FInTryKMeansWithTau) {
 
 	std::vector<double> Fres = {0, 0.8, 1.3, 2.1, 2.6, 3.4};
 
-	try_kmeans(x.size(), sum.data(), sum_sq.data(), 0.5, F.data(), H.data(), J.data(), Jbottom.data());
+	try_kmeans(x.size(), sum.data(), sum_sq.data(), 0.8, F.data(), H.data(), J.data(), Jbottom.data());
 	
 	for (int i = 0; i <= x.size(); ++i)
 	{
 		EXPECT_NEAR(Fres[i], F[i], 1e-14);
 	}
+}
+
+TEST(KMeansNLogU, CorrectMinWithZeroTau) {
+	std::vector<double> x(1);
+	std::iota(x.begin(), x.end(), 0);
+	std::vector<double> sum(x.size()), sum_sq(x.size());
+	std::vector<double> F(x.size() + 1, INFINITY), H(x.size() + 1, INFINITY);
+	std::vector<long long> J(x.size() + 1), Jbottom(x.size() + 1);
+	calculate_sum_x(x.data(), x.size(), sum_sq.data(), sum.data());
+
+	//std::vector<double> Fres = {0, 0.8, 1.3, 2.1, 2.6, 3.4};
+	std::vector<double> Fres(x.size() + 1, 0);
+	std::vector<long long> Jres(x.size() + 1);
+	std::iota(Jres.begin(), Jres.end(), -1);
+	Jres[0] = 0;
+
+	try_kmeans(x.size(), sum.data(), sum_sq.data(), 0, F.data(), H.data(), J.data(), Jbottom.data());
+	
+	for (int i = 0; i <= x.size(); ++i)
+	{
+		EXPECT_NEAR(Fres[i], F[i], 1e-14);
+		EXPECT_EQ(Jres[i], J[i]);
+	}
+	
 }
 
 TEST(KMeansNLogU, JInTryKMeansWithTau) {

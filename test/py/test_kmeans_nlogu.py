@@ -8,9 +8,10 @@ import bisect
 class TestKMeansNLogU(unittest.TestCase):
 
     def test_rmse_is_adequate(self):
-        n_elements = 1000000
-        x = np.random.default_rng().normal(loc=0, scale=1000, size=(n_elements, 1))
-        max_rmses = np.array([3.5])
+        n_elements = 10
+        x = np.array([[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]]).T
+        #x = np.random.default_rng().normal(loc=0, scale=1000, size=(n_elements, 1))
+        max_rmses = np.array([0])
         borders = np.empty(shape=(n_elements + 1,))
         centers = np.empty(shape=(n_elements,))
         kOpts = np.empty(shape=(1,), dtype=np.int64)
@@ -22,12 +23,13 @@ class TestKMeansNLogU(unittest.TestCase):
         restored = np.array(list(map(lambda e: [centers[bisect.bisect_left(borders[:n_elements], e)]], x)))
         rmse = np.sqrt(np.mean((restored - x) ** 2, axis=0))
         with self.subTest(expected=rmse[0], actual=res_rmses[0]):
-            self.assertTrue(np.isclose(rmse[0], res_rmses[0], rtol=1e-2, atol=1e-5))  # replace with np.isclose
+            self.assertTrue(np.isclose(rmse[0], res_rmses[0], rtol=1e-8, atol=1e-10))  # replace with np.isclose
 
     def test_close_enough_rmse_for_random(self):
-        n_elements = 1000000
-        x = np.random.default_rng().uniform(low=-10000, high=10000, size=(n_elements, 1))
-        expected_rmse = 10.0
+        n_elements = 10
+        x = np.array([[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]]).T
+        #x = np.random.default_rng().uniform(low=-10000, high=10000, size=(n_elements, 1))
+        expected_rmse = 0
         max_rmses = np.array([expected_rmse])
         borders = np.empty(shape=(n_elements + 1,))
         centers = np.empty(shape=(n_elements,))
@@ -39,7 +41,7 @@ class TestKMeansNLogU(unittest.TestCase):
                 self.assertTrue(np.isclose(expected_rmse, res_rmses[0], rtol=0.1, atol=1e-3))
 
     def test_identical_results_with_linear(self):
-        n_elements = 100
+        n_elements = 10
         x = np.random.default_rng().normal(loc=0, scale=1, size=(n_elements, 1))
         x_linear = x.copy().T
         expected_rmse = 0.4

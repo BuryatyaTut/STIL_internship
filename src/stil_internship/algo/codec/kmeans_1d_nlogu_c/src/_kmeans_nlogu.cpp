@@ -24,27 +24,28 @@ void kmeans_nlogu(py::array_t<double, py::array::c_style | py::array::forcecast>
 	
 	for (long long col = 0; col < col_cnt; ++col)
 	{
-		kOpts_ptr[col] = bin_search(x_ptr + col * row_cnt, row_cnt, max_rmses_ptr[col], borders_ptr + col * row_cnt, res_rmses_ptr + col, centers_ptr + col * row_cnt); 
+		//NOTE: n-dim numpy arrays are always treated in the c-side of pybind11 as 1-dim,
+		//so we need to introduce an extremely cursed addressing
+		//While yes, it does provide the .shape(dim) methods, there's no realistic way to reinterpret
+
+		//(Thank god it's only two dimensions, I wouldn't want to know how numpy lays out n-dim arrays in memory)
+
+		size_t col_offset = col * row_cnt;
+		double* x_cur_col_ptr = x_ptr + col_offset;
+		double* borders_cur_col_ptr = borders_ptr + col_offset;
+		double* centers_cur_col_ptr = centers_ptr + col_offset;
+
+		kOpts_ptr[col] = KMeans(
+			x_cur_col_ptr, 
+			row_cnt, 
+			max_rmses_ptr[col], 
+			borders_cur_col_ptr, 
+			&res_rmses_ptr[col], 
+			centers_cur_col_ptr
+		); 
 	}
 }
 PYBIND11_MODULE(_kmeans_nlogu, m)
 {
 		m.def("kmeans_nlogu", &kmeans_nlogu, "The O(n lg U) implementation of 1d kmeans");
-}
-int main()
-{
-	std::vector x = {1.0, 2.0, 3.0, 4.0, 5.0};
-	std::vector<double> borders(x.size());
-	std::vector<double> res_rmse(x.size());
-	std::vector<double> centers(x.size());
-	long long kopt = bin_search(x.data(), 5,0.0000001, borders.data(), res_rmse.data(), centers.data());
-
-	std::cout << "Kopt: " << kopt << std::endl << "Cluster borders:" << std::endl;
-
-	for (int i = 0; i < kopt + 1; ++i)
-	{
-		std::cout<<borders[i]<<std::endl;
-	}
-	
-	return 0; 
 }

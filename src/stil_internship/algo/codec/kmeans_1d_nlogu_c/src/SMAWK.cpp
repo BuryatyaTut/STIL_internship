@@ -1,5 +1,5 @@
 /* EWL2_fill_SMAWK.cpp --- a divide-and-conquer algorithm to compute a
- *   row in the dynamic programming matrix in O(n) time for equally
+ *   column in the dynamic programming matrix in O(n) time for equally
  *   weighted L2 univariate k-means
  *
  * Copyright (C) 2016-2020 Mingzhou Song
@@ -24,13 +24,15 @@
 #include <vector>
 
 #include "metrics.h"
+#include "platform.h"
 void reduce_in_place(long long imin, long long imax, long long istep, 
 					 const std::vector<long long> & js,
 					 std::vector<long long> & js_red,
 					 double* sum_x,
 					 double* sum_x_sq,
 					 double tau,
-					 double* F)
+					 double* F,
+					 long long N_full)
 {
 
   long long N = (imax - imin) / istep + 1;
@@ -42,40 +44,40 @@ void reduce_in_place(long long imin, long long imax, long long istep,
   }
 
   // Two positions to move candidate j's back and forth
-  long long left = -1; // points to last favorable position / column
-  long long right = 0; // points to current position / column
+  long long left = -1; // points to last favorable position / row
+  long long right = 0; // points to current position / row
 
   size_t m = js_red.size();
 
-  while(m > N) { // js_reduced has more than N positions / columns
+  while(m > N) { // js_reduced has more than N positions / rows
 
 	long long p = left + 1;
 
 	long long i = imin + p * istep;
 	long long j = (js_red[right]);
 	double Sl = (F[j] +
-	  w(j, i, sum_x, sum_x_sq, tau, N));
+		w(j, i, sum_x, sum_x_sq, tau, N_full));
 	// ssq(j, i, sum_x, sum_x_sq, sum_w));
 
 	long long jplus1 = (js_red[right+1]);
 	double Slplus1 = (F[jplus1] +
-	  w(jplus1, i, sum_x, sum_x_sq, tau, N));
+	  w(jplus1, i, sum_x, sum_x_sq, tau, N_full));
 	// ssq(jplus1, i, sum_x, sum_x_sq, sum_w));
 
 	if(Sl < Slplus1 && p < N-1) {
 	  js_red[ ++ left ] = j; // i += istep;
-	  right ++; // move on to next position / column p+1
+	  right ++; // move on to next position / row p+1
 	} else if(Sl < Slplus1 && p == N-1) {
-	  js_red[ ++ right ] = j; // delete position / column p+1
+	  js_red[ ++ right ] = j; // delete position / row p+1
 	  m --;
 	} else { // (Sl >= Slplus1)
 	  if(p > 0) { // i > imin
-		// delete position / column p and
-		//   move back to previous position / column p-1:
+		// delete position / row p and
+		//   move back to previous position / row p-1:
 		js_red[right] = js_red[left --];
 		// p --; // i -= istep;
 	  } else {
-		right ++; // delete position / column 0
+		right ++; // delete position / row 0
 	  }
 	  m --;
 	}
@@ -88,7 +90,7 @@ void reduce_in_place(long long imin, long long imax, long long istep,
   js_red.resize(m);
 }
 
-inline void fill_even_positions
+INLINE_SPEC void fill_even_positions
 (long long imin, long long imax, long long istep,
  const std::vector<long long> & js,
  double* sum_x,
@@ -99,7 +101,7 @@ inline void fill_even_positions
  double* F_top,
  size_t N)
 {
-  // Derive j for even rows (0-based)
+  // Derive j for even columns (0-based)
   long long n = js.size();
   long long istepx2 = istep << 1;
   long long jl = js[0];
@@ -153,7 +155,7 @@ inline void fill_even_positions
   }
 }
 
-inline void find_min_from_candidates
+INLINE_SPEC void find_min_from_candidates
 (long long imin, long long imax, long long istep,
  const std::vector<long long> & js,
  double* sum_x,
@@ -165,7 +167,7 @@ inline void find_min_from_candidates
  size_t N)
 {
   long long rmin_prev = 0;
-  for(long long i=imin; i<=imax; i+=istep) { //find_min_from candidates is only ever called with imin<=imax, why is this even needed
+  for(long long i=imin; i<=imax; i+=istep) { //find_min_from candidates is only ever called with imin>=imax, why is this even needed
 											 //unless istep can be negative or zero, which would be extremely weird
 											 //wait no, this might actually be useful when we receive a 1xN matrix and want to populate all the J's
 	
@@ -219,13 +221,13 @@ size_t N)
 	std::vector<long long> js_odd;
 
 	reduce_in_place(imin, imax, istep, js, js_odd,
-					sum_x, sum_x_sq, tau, F);
+					sum_x, sum_x_sq, tau, F, N);
    
 	long long istepx2 = istep << 1;
 	long long imin_odd = imin + istep;
 	long long imax_odd = imin_odd + (imax - imin_odd) / istepx2 * istepx2;
 
-	// Recursion on odd rows (0-based):
+	// Recursion on odd columns (0-based):
 	SMAWK(imin_odd, imax_odd, istepx2,
 		 js_odd, sum_x, sum_x_sq, F, tau, J, F_top, N);
 
@@ -241,7 +243,7 @@ void run_SMAWK(double* F, long long* J, double* F_top, long long x0, long long x
 	//F is where the values are put
 	//F_top is where they're calculated from (needed for bottom SMAWK)
 
-	//throw std::exception("This is broken");
+	//thcolumn std::exception("This is broken");
   // Assumption: each cluster must have at least one point.
 
   std::vector<long long> js(x1 -  x0 + 1);
@@ -249,7 +251,7 @@ void run_SMAWK(double* F, long long* J, double* F_top, long long x0, long long x
   std::generate(js.begin(), js.end(), [&] { return abs++; } );
 
   SMAWK(y0, y1, 1, js, sum_x, sum_x_sq, F, tau, J, F_top, N);
-	//Note the swapped axes. We need to obtain the column minima here, 
-	//unlike the original row minima
+	//Note the swapped axes. We need to obtain the row minima here, 
+	//unlike the original column minima
 }
 

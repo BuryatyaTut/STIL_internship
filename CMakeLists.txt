@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.13)
 project(ckmeans_1d_dp_stil VERSION 0.0.1)
 find_package(pybind11 CONFIG)
 

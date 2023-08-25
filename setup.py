@@ -32,12 +32,12 @@ class CMakeBuild(build_ext):
             f"-DCMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE={extdir}{os.sep}",
             f"-DCMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG={extdir}{os.sep}",
             f"-DPYTHON_EXECUTABLE={sys.executable}",
-            "-DCMAKE_BUILD_TYPE=Release",
+            "-DCMAKE_BUILD_TYPE=Debug",
             "-T Intel C++ Compiler 2023"
 
         ]
         build_args = [
-            "--config Release"
+            "--config Debug"
         ]
         build_temp = Path(self.build_temp) / ext.name
         if not build_temp.exists():
